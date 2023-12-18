@@ -1,5 +1,5 @@
 [package]
-name = "day1"
+name = "utils"
 version = "0.1.0"
 edition = "2021"
 authors = ["Daniele Torelli"]
@@ -7,4 +7,3 @@ authors = ["Daniele Torelli"]
 [dependencies]
 pcre2 = "0.2.6"
 lazy_static = "1.4.0"
-utils = { path = "../utils" }

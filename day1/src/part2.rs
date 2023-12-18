@@ -1,13 +1,9 @@
 use lazy_static::lazy_static;
 use pcre2::bytes::Regex;
 use std::str::Lines;
+use utils::extract_groups;
 
 pub fn run(lines: &Lines) -> u16 {
-    // The test input contains numbers written as text: one, two, three, etc. up to nine.
-    // We need to convert them to numbers.
-
-    // The input contains numbers written as text: one, two, three, etc. up to nine.
-
     (*lines)
         .clone()
         .map(|line| {
@@ -30,13 +26,10 @@ fn extract(input: &str) -> (&str, &str) {
             Regex::new(format!(r"(?P<first>{p}).*(?P<last>{p})", p = PATTERN).as_str()).unwrap();
     }
 
-    if let Some(caps) = TWO_MATCHES_R.captures(input.as_bytes()).unwrap() {
-        let first = caps.name("first").unwrap().as_bytes();
-        let last = caps.name("last").unwrap().as_bytes();
-        return (
-            std::str::from_utf8(first).unwrap(),
-            std::str::from_utf8(last).unwrap(),
-        );
+    if let [Some(first), Some(last)] =
+        extract_groups(&input, &TWO_MATCHES_R, vec!["first", "last"])[..]
+    {
+        return (first, last);
     }
 
     lazy_static! {
@@ -44,10 +37,8 @@ fn extract(input: &str) -> (&str, &str) {
             Regex::new(format!(r"(?P<first>{})", PATTERN).as_str()).unwrap();
     }
 
-    if let Some(caps) = ONE_MATCH_R.captures(input.as_bytes()).unwrap() {
-        let first = caps.name("first").unwrap().as_bytes();
-        let first_str = std::str::from_utf8(first).unwrap();
-        return (first_str, first_str);
+    if let [Some(first)] = extract_groups(&input, &ONE_MATCH_R, vec!["first"])[..] {
+        return (first, first);
     }
 
     panic!("No match for input: {}", input)
