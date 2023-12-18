@@ -29,10 +29,10 @@ pub struct Game {
     sets: Vec<GameSet>,
 }
 impl Game {
-    pub fn parse<'a>(input: &str) -> Result<Self, String> {
-        fn parse_cube<'a>(i: &str) -> GameSet {
-            i.split(",").fold(GameSet::empty(), |acc: GameSet, s| {
-                let (amount, color) = s.trim().split_once(" ").unwrap();
+    pub fn parse(input: &str) -> Result<Self, String> {
+        fn parse_cube(i: &str) -> GameSet {
+            i.split(',').fold(GameSet::empty(), |acc: GameSet, s| {
+                let (amount, color) = s.trim().split_once(' ').unwrap();
                 let amount = amount.parse::<u16>().unwrap();
                 match color {
                     "red" => GameSet::new(acc.red_cubes + amount, acc.blue_cubes, acc.green_cubes),
@@ -45,25 +45,26 @@ impl Game {
             })
         }
         fn parse_set(input: &str) -> Vec<GameSet> {
-            input.split(";").map(parse_cube).collect()
+            input.split(';').map(parse_cube).collect()
         }
 
         lazy_static! {
             static ref GAME_PATTERN: Regex =
                 Regex::new(r#"^Game (?P<game_id>\d+): (?P<sets>.+)$"#).unwrap();
         }
-        let game_id: Option<GameId> = extract_group(&input, &GAME_PATTERN, "game_id")
+        let game_id: Option<GameId> = extract_group(input, &GAME_PATTERN, "game_id")
             .map(|s| GameId(s.parse::<u16>().unwrap()));
-        let sets: Vec<GameSet> = extract_group(&input, &GAME_PATTERN, "sets")
-            .map(|s| parse_set(s))
-            .unwrap_or(vec![]);
-        if game_id.is_none() || sets.is_empty() {
-            Err(format!("Unable to parse: {}", input))
+        let sets: Vec<GameSet> = extract_group(input, &GAME_PATTERN, "sets")
+            .map(parse_set)
+            .unwrap_or_default();
+        if let Some(game_id) = game_id {
+            if !sets.is_empty() {
+                Ok(Game { id: game_id, sets })
+            } else {
+                Err(format!("No game sets found in input: {}", input))
+            }
         } else {
-            Ok(Game {
-                id: game_id.unwrap(),
-                sets,
-            })
+            Err(format!("No game id found in input: {}", input))
         }
     }
 

@@ -10,7 +10,7 @@ pub fn extract_groups<'a>(
             .iter()
             .map(|name| {
                 captures
-                    .name(*name)
+                    .name(name)
                     .and_then(|m| std::str::from_utf8(m.as_bytes()).ok())
             })
             .collect(),

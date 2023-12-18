@@ -6,7 +6,7 @@ pub fn run(lines: &Lines) -> u32 {
         .clone()
         .map(|l| l.trim())
         .filter(|l| !(*l).is_empty())
-        .flat_map(|line| Game::parse(line))
+        .flat_map(Game::parse)
         .map(|g| g.min_set_possible())
         .map(|set| set.blue_cubes as u32 * set.green_cubes as u32 * set.red_cubes as u32)
         .sum()

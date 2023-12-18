@@ -6,7 +6,7 @@ pub fn run(lines: &Lines) -> u16 {
         .clone()
         .map(|l| l.trim())
         .filter(|l| !(*l).is_empty())
-        .flat_map(|line| Game::parse(line))
+        .flat_map(Game::parse)
         .filter(|g| g.is_possible())
         .map(|g| g.id.0)
         .sum()

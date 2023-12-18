@@ -27,7 +27,7 @@ fn extract(input: &str) -> (&str, &str) {
     }
 
     if let [Some(first), Some(last)] =
-        extract_groups(&input, &TWO_MATCHES_R, vec!["first", "last"])[..]
+        extract_groups(input, &TWO_MATCHES_R, vec!["first", "last"])[..]
     {
         return (first, last);
     }
@@ -37,7 +37,7 @@ fn extract(input: &str) -> (&str, &str) {
             Regex::new(format!(r"(?P<first>{})", PATTERN).as_str()).unwrap();
     }
 
-    if let [Some(first)] = extract_groups(&input, &ONE_MATCH_R, vec!["first"])[..] {
+    if let [Some(first)] = extract_groups(input, &ONE_MATCH_R, vec!["first"])[..] {
         return (first, first);
     }
 
